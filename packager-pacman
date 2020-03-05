@@ -1,0 +1,84 @@
+#!/bin/bash
+
+case $1 in
+enabled)
+    hash pacman 2>/dev/null || (echo "'pacman' is not installed."; exit 1)
+    ;;
+name)
+    echo -n "pacman"
+    ;;
+install)
+    shift
+    announce "pacman -S --needed $*"
+    sudo pacman -S --needed $*
+    ;;
+upgrade)
+    shift
+    announce "pacman -Syyuu $*"
+    sudo pacman -Syyuu $*
+    announce "pacman -Fy"
+    sudo pacman -Fy
+    ;;
+clean)
+    announce "Unneeded/orphan packages:"
+    pacman -Qdt
+    announce -nn "Do you want to remove them? (y/N)"
+    read -r CHOICE
+    case $CHOICE in
+    y|Y)
+        packager remove "$(pacman -Qdt)"
+        ;;
+    esac
+    announce "Cleaning of the package cache:"
+    echo " u. Remove uninstalled packages from the cache"
+    echo " i. Remove everything from the cache (not recommended)"
+    echo " n. Do not clean the cache"
+    announce -nn "Do you want to clean the cache? (u/i/N)"
+    read -r CHOICE
+    case $CHOICE in
+    u)
+        announce "pacman -Sc"
+        sudo pacman -Sc;;
+    i)
+        announce "pacman -Scc"
+        sudo pacman -Scc;;
+    esac
+    ;;
+remove)
+    shift
+    announce "pacman -R $*"
+    sudo pacman -R --confirm $*
+    ;;
+purge)
+    shift
+    announce "pacman -Rncs $*"
+    sudo pacman -Rncs --confirm $*
+    ;;
+search)
+    shift
+    announce "Where do you want to search on?"
+    echo " 0. All packages"
+    echo " 1. Installed packages"
+    echo " 2. Search for a file"
+    announce -nn "Your choice:"
+    read -r CHOICE
+    case $CHOICE in
+    0|a|all)
+        announce "pacman -Ss $*"
+        pacman -Ss $*
+        ;;
+    1|i|installed)
+        announce "pacman -Qi $*"
+        pacman -Qi $*
+        ;;
+    2|f|file)
+        announce "pacman -F $*"
+        pacman -F $*
+        ;;
+    esac
+    ;;
+*)
+    announce "Invalid command '$1'."
+    exit 2
+    ;;
+esac
