@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+. ${os_toolkit_import:?}
+
 case $1 in
 enabled)
 	hash aptitude 2>/dev/null || (
@@ -12,32 +14,32 @@ name)
 	;;
 install)
 	shift
-	announce sudo "aptitude install $*"
+	os_info sudo "aptitude install $*"
 	;;
 upgrade)
 	shift
 	if [[ $# == 0 ]]; then
-		announce sudo "aptitude update"
-		announce sudo "aptitude safe-upgrade"
+		os_info sudo "aptitude update"
+		os_info sudo "aptitude safe-upgrade"
 	else
-		announce "Cannot upgrade only selected packages."
+		os_info "Cannot upgrade only selected packages."
 		exit 1
 	fi
 	;;
 purge)
 	shift
-	announce sudo "aptitude purge $*"
+	os_info sudo "aptitude purge $*"
 	;;
 remove)
 	shift
-	announce sudo "aptitude remove $*"
+	os_info sudo "aptitude remove $*"
 	;;
 search)
 	shift
-	announce run "aptitude search $*"
+	os_info run "aptitude search $*"
 	;;
 *)
-	announce "Invalid command '$1'."
+	os_info "Invalid command '$1'."
 	exit 2
 	;;
 esac
