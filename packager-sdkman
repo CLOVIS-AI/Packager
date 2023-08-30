@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+. ${os_toolkit_import:?}
+
 function ensure_sdkman() {
 	_sdkman_path="$HOME/.sdkman/bin/sdkman-init.sh"
 	[[ -f $_sdkman_path ]] && . "$_sdkman_path"
@@ -33,29 +35,29 @@ name)
 install)
 	shift
 	ensure_sdkman
-	announce run "source $_sdkman_path && sdk install $*"
+	os_info run "source $_sdkman_path && sdk install $*"
 	;;
 upgrade)
 	shift
 	ensure_sdkman
-	announce run "source $_sdkman_path && sdk update"
-	announce run "source $_sdkman_path && sdk upgrade $*"
-	announce run "source $_sdkman_path && sdk selfupdate"
+	os_info run "source $_sdkman_path && sdk update"
+	os_info run "source $_sdkman_path && sdk upgrade $*"
+	os_info run "source $_sdkman_path && sdk selfupdate"
 	;;
 purge)
 	shift
-	announce run "source $_sdkman_path && sdk uninstall $*"
+	os_info run "source $_sdkman_path && sdk uninstall $*"
 	;;
 remove)
 	shift
-	announce run "source $_sdkman_path && sdk uninstall $*"
+	os_info run "source $_sdkman_path && sdk uninstall $*"
 	;;
 search)
 	shift
-	announce run "source $_sdkman_path && sdk list $*"
+	os_info run "source $_sdkman_path && sdk list $*"
 	;;
 *)
-	announce "Invalid command '$1'."
+	os_info "Invalid command '$1'."
 	exit 2
 	;;
 esac
