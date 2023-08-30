@@ -31,7 +31,7 @@
 #   Should remove the selected packages, but (if applicable), keep their dependencies and configuration.
 #
 # purge [package1] [package2] [...]
-#   Should completely remove the package, any uneeded dependencies, and configuration files.
+#   Should completely remove the package, any unneeded dependencies, and configuration files.
 #
 # search [package1] [package2] [...]
 #   Should search for a package in the repositories.
@@ -44,7 +44,7 @@ if [[ $1 == "complete" ]]; then
 	return
 fi
 
-# ============================================= H E L P =============================================== #
+# region Help
 
 if [[ $1 == "help" || $1 == "--help" ]]; then
 	cat <<EOF
@@ -80,7 +80,8 @@ EOF
 	exit 0
 fi
 
-# ======================================== V E R B O S I T Y ========================================== #
+# endregion
+# region Verbosity
 
 VERBOSE=0
 if [[ $1 == "v" || $1 == "-v" ]]; then
@@ -92,23 +93,21 @@ function debug() {
 	[[ $VERBOSE == 1 ]] && echo "debug: $*"
 }
 
-# ========================================== L O A D I N G ============================================ #
+# endregion
+# region Dependencies
 
-debug "Checking for installation of dependencies..."
-. cl-depend announce "packager"
-. cl-depend compgen "packager"
-. cl-depend announce-menu "packager"
-. announce-menu --import
-debug "All dependencies checked."
+. ${os_toolkit_import:?}
+os_require --caller packager compgen
 
-# ============================================ E X E C ================================================ #
+# endregion
+# region Execution
 
 function find-tools() {
 	for tool in $(compgen -A command "packager-") $(compgen -A function "packager-"); do
 		debug "Tool $tool found."
 		if $tool enabled >/dev/null; then
 			debug "Tool $tool is enabled."
-			TOOLS+=("${tool/packager-/}:$($tool name)")
+			TOOLS+=("${tool/packager-/} $($tool name)")
 		else
 			debug "Tool $tool is disabled (if this is abnormal, run '$tool enabled' to get more information.)."
 		fi
@@ -116,8 +115,8 @@ function find-tools() {
 }
 
 function select-tool() {
-	announce-menu --title "Choose your tool:" "${TOOLS[@]}"
-	TOOL="packager-$(announce-menu-get)"
+	os_menu --title "Choose your tool:" "${TOOLS[@]}"
+	TOOL="packager-${os_menu_answer:?}"
 	debug "Selected tool: '$TOOL'."
 }
 
@@ -125,7 +124,7 @@ declare -a TOOLS
 find-tools
 
 if [[ $1 == "--tool" ]]; then
-	. cl-depend "$2" "packager"
+	os_require --caller packager "$2"
 	TOOL="$2"
 	shift
 	shift
@@ -145,11 +144,11 @@ function find-command() {
 		COMMAND=search
 		;;
 	remove | r | purge | p)
-		announce-menu --title "Are you sure you want to completely remove the packages?" \
-			"yes:Yes, delete everything, including uneeded dependencies and configuration." \
-			"keep:No, remove the packages but keep the dependencies and configuration." \
-			"no:No, don't do anything."
-		case $(announce-menu-get) in
+		os_menu --title "Are you sure you want to completely remove the packages?" \
+			"yes Yes, delete everything, including unneeded dependencies and configuration." \
+			"keep No, remove the packages but keep the dependencies and configuration." \
+			"no No, don't do anything."
+		case $os_menu_answer in
 		yes)
 			COMMAND=purge
 			;;
@@ -157,13 +156,13 @@ function find-command() {
 			COMMAND=remove
 			;;
 		no)
-			announce "Stopping."
+			os_info "Stopping."
 			exit 0
 			;;
 		esac
 		;;
 	*)
-		announce "Unknown command '$1', passing it anyway."
+		os_info "Unknown command '$1', passing it anyway."
 		COMMAND="$1"
 		;;
 	esac
@@ -171,5 +170,7 @@ function find-command() {
 
 find-command $1
 shift
+
+# endregion
 
 $TOOL $COMMAND $*
