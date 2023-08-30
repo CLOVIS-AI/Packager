@@ -1,18 +1,16 @@
 #!/usr/bin/env bash
 
-. cl-depend announce "packager-pip"
-. cl-depend announce-menu "packager-pip"
-. announce-menu --import
+. ${os_toolkit_import:?}
 
 function ask-mode() {
 	[[ "$VIRTUAL_ENV" == "" ]]
 	IN_ENV=$?
 
-	announce-menu --title "How do you want to run PIP?" \
-		"root:System-wide packages" \
-		"user:Personnal packages" \
-		"virtual:This project only"
-	case $(announce-menu-get) in
+	os_menu --title "How do you want to run PIP?" --default virtual \
+		"root System-wide packages" \
+		"user Personal packages" \
+		"virtual This project only"
+	case ${os_menu_answer:?} in
 	r | root)
 		MODE="sudo"
 		PIP="pip"
@@ -22,18 +20,17 @@ function ask-mode() {
 		if [[ "$IN_ENV" != 1 ]]; then
 			activate=$(find . -name 'activate')
 			# shellcheck disable=SC2086
-			announce-menu --title "Not running in a virtual environment. Do you want to activate one?" \
+			os_menu --title "Not running in a virtual environment. Do you want to activate one?" \
 				$activate \
-				"create:Create a new virtual environment"
-			if announce-menu --chosen "create"; then
-				announce-menu --title "Where do you want to create it?" --allow-other \
-					"$PWD/env:Here, named 'env'" \
-					"$PWD/venv:Here, named 'venv'"
-				choice=$(announce-menu-get)
-				announce run python3 -m venv "$choice"
-				activate="$choice/bin/activate"
+				"create Create a new virtual environment"
+			if [[ ${os_menu_answer:?} == "create" ]]; then
+				os_menu --title "Where do you want to create it?" --allow-other \
+					"$PWD/env Here, named 'env'" \
+					"$PWD/venv Here, named 'venv'"
+				os_info run python3 -m venv "$os_menu_answer"
+				activate="$os_menu_answer/bin/activate"
 			fi
-			announce "Activating the environment..."
+			os_info "Activating the environment..."
 			# shellcheck disable=SC1090
 			. "$activate"
 		fi
@@ -70,39 +67,39 @@ install)
 		requirements=$(find . -name requirements.txt)
 		if [[ $(wc <<<"$requirements" -l) != 1 ]]; then
 			# shellcheck disable=SC2086
-			announce-menu --title "Choose which file to install packages from:" \
+			os_menu --title "Choose which file to install packages from:" \
 				$requirements
-			requirements=$(announce-menu-get)
+			requirements="$os_menu_answer"
 		fi
-		announce $MODE "$PIP install $AS_USER -r $requirements"
+		os_info $MODE "$PIP install $AS_USER -r $requirements"
 	else
-		announce $MODE "$PIP install $AS_USER $*"
+		os_info $MODE "$PIP install $AS_USER $*"
 	fi
 	;;
 upgrade)
 	shift
 	ask-mode
 	if [[ $# -eq 0 ]]; then
-		announce $MODE "$PIP list --outdated"
-		announce "The above packages can be updated. Call 'packager upgrade <package name>' to upgrade them."
+		os_info $MODE "$PIP list --outdated"
+		os_info "The above packages can be updated. Call 'packager upgrade <package name>' to upgrade them."
 	else
-		announce $MODE "$PIP install $AS_USER --upgrade $*"
+		os_info $MODE "$PIP install $AS_USER --upgrade $*"
 	fi
 	;;
 clean)
-	announce "Nothing to do on PIP."
+	os_info "Nothing to do on PIP."
 	;;
 remove | purge)
 	shift
 	ask-mode
-	announce $MODE "$PIP uninstall $AS_USER $*"
+	os_info $MODE "$PIP uninstall $AS_USER $*"
 	;;
 search)
 	shift
-	announce "Not implemented yet. Please submit a merge request at https://gitlab.com/clovis-ai/dotfiles"
+	os_info "Not implemented yet. Please submit a merge request at https://gitlab.com/opensavvy/packager"
 	;;
 *)
-	announce "Invalid command '$1'."
+	os_info "Invalid command '$1'."
 	exit 2
 	;;
 esac
