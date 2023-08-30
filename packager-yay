@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-. cl-depend announce "packager-yay"
-. cl-depend announce-menu "packager-yay"
-. announce-menu --import
+. ${os_toolkit_import:?}
 
 case $1 in
 enabled)
@@ -16,65 +14,49 @@ name)
 	;;
 install)
 	shift
-	announce run "yay -S --needed $*"
+	os_info run "yay -S --needed $*"
 	;;
 upgrade)
 	shift
-	announce run "yay -Syuu $*"
-	announce run "yay -Fy"
+	os_info run "yay -Syuu $*"
+	os_info run "yay -Fy"
 	;;
 clean)
-	announce "Unneeded/orphan packages:"
-	yay -Qdt
-	announce-menu --title "Do you want to remove them?" --default "no" "yes" "no"
-	if announce-menu --chosen "yes"; then
-		packager --tool packager-yay remove "$(yay -Qdt | cut -d ' ' -f 1)"
-	fi
-	announce-menu --title "Cleaning of the package cache:" --default "no" \
-		"uninstalled:Remove uninstalled packages from the cache" \
-		"full:Remove everything from the cache" \
-		"no:Do not clean the cache"
-	case $(announce-menu-get) in
-	uninstalled)
-		announce run "yay -Sc"
-		;;
-	full)
-		announce run "yay -Scc"
-		;;
-	esac
+	packager --tool packager-pacman clean
+	os_info run "yay -Sc"
 	;;
 remove)
 	shift
-	announce run "yay -R --confirm $*"
+	os_info run "yay -R --confirm $*"
 	;;
 purge)
 	shift
-	announce run "yay -Rsu --confirm $*"
+	os_info run "yay -Rsu --confirm $*"
 	;;
 search)
 	shift
-	announce-menu --title "Where do you want to search on?" \
-		"all:Search for a package with this name" \
-		"installed:Give me information on this package I installed" \
-		"file:Where can I find this file?" \
-		"files:Show the contents of this package"
-	case $(announce-menu-get) in
+	os_menu --title "Where do you want to search?" --default all \
+		"all Search for a package with this name" \
+		"installed Give me information on this package I installed" \
+		"file Where can I find this file?" \
+		"files Show the contents of this package"
+	case ${os_menu_answer:?} in
 	all)
-		announce run "yay -Ss $*"
+		os_info run "yay -Ss $*"
 		;;
 	installed)
-		announce run "yay -Qi $*"
+		os_info run "yay -Qi $*"
 		;;
 	file)
-		announce run "yay -F $*"
+		os_info run "yay -F $*"
 		;;
 	files)
-		announce run "yay -Ql $*"
+		os_info run "yay -Ql $*"
 		;;
 	esac
 	;;
 *)
-	announce "Invalid command '$1'."
+	os_info "Invalid command '$1'."
 	exit 2
 	;;
 esac

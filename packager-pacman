@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-. cl-depend announce "packager-yay"
-. cl-depend announce-menu "packager-yay"
-. announce-menu --import
+. ${os_toolkit_import:?}
 
 case $1 in
 enabled)
@@ -16,70 +14,67 @@ name)
 	;;
 install)
 	shift
-	announce sudo "pacman -S --needed $*"
+	os_info sudo "pacman -S --needed $*"
 	;;
 upgrade)
 	shift
-	announce sudo "pacman -Syuu $*"
-	announce sudo "pacman -Fy"
+	os_info sudo "pacman -Syuu $*"
+	os_info sudo "pacman -Fy"
 	;;
 clean)
-	announce "Unneeded/orphan packages:"
-	pacman -Qdt
-	announce -nn "Do you want to remove them? (y/N)"
-	read -r CHOICE
-	case $CHOICE in
-	y | Y)
-		packager --tool packager-pacman remove "$(pacman -Qdt)"
-		;;
-	esac
-	announce "Cleaning of the package cache:"
-	echo " u. Remove uninstalled packages from the cache"
-	echo " i. Remove everything from the cache (not recommended)"
-	echo " n. Do not clean the cache"
-	announce -nn "Do you want to clean the cache? (u/i/N)"
-	read -r CHOICE
-	case $CHOICE in
+	os_info "Searching for unneeded/orphan packages…"
+	if pacman -Qdt; then
+		os_menu --title "Do you want to remove them?" --default no "yes Remove them" "no Keep them"
+		if [[ ${os_menu_answer:?} == "yes" ]]; then
+			packager --tool packager-pacman remove "$(pacman -Qdt | cut -d' ' -f1)"
+		fi
+	fi
+
+	os_menu --title "Cleaning the package cache" --default u \
+		"u Remove uninstalled packages from the cache" \
+		"i Completely clean the cache (it will be impossible to rollback packages)" \
+		"n Do not clean the cache"
+	case ${os_menu_answer:?} in
 	u)
-		announce sudo "pacman -Sc"
+		os_info sudo "pacman -Sc"
 		;;
 	i)
-		announce sudo "pacman -Scc"
+		os_info sudo "pacman -Scc"
 		;;
 	esac
 	;;
 remove)
 	shift
-	announce sudo "pacman -R --confirm $*"
+	os_info sudo "pacman -R --confirm $*"
 	;;
 purge)
 	shift
-	announce sudo "pacman -Rsu --confirm $*"
+	os_info sudo "pacman -Rsu --confirm $*"
 	;;
 search)
 	shift
-	announce-menu --title "Where do you want to search on?" \
-		"all:Search for a package with this name" \
-		"installed:Give me information on this package I installed" \
-		"file:Where can I find this file?" \
-		"files:Show the contents of this package"
-	case $(announce-menu-get) in
+	os_menu --title "Where do you want to search?" --default all \
+		"all Search for a package with this name" \
+		"installed Give me information on this package I installed" \
+		"file Where can I find this file?" \
+		"files Show the contents of this package"
+	case ${os_menu_answer:?} in
 	all)
-		announce run "pacman -Ss $*"
+		os_info run "pacman -Ss $*"
 		;;
 	installed)
-		announce run "pacman -Qi $*"
+		os_info run "pacman -Qi $*"
 		;;
 	file)
-		announce run "pacman -F $*"
+		os_info run "pacman -F $*"
 		;;
 	files)
-		announce run "pacman -Ql $*"
+		os_info run "pacman -Ql $*"
 		;;
 	esac
 	;;
 *)
-	announce "Invalid command '$1'."
+	os_info "Invalid command '$1'."
 	exit 2
 	;;
 esac
