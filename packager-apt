@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+. ${os_toolkit_import:?}
+
+case $1 in
+enabled)
+	hash apt 2>/dev/null || (
+		echo "'apt' is not installed."
+		exit 1
+	)
+	hash apt-cache 2>/dev/null || (
+		echo "'apt-cache' is not installed."
+		exit 1
+	)
+	;;
+name)
+	echo -en "Old Debian package manager. Consider using 'aptitude' instead: https://askubuntu.com/a/1749/871815"
+	;;
+install)
+	shift
+	os_info sudo "apt install $*"
+	;;
+upgrade)
+	shift
+	if [[ $# == 0 ]]; then
+		os_info sudo "apt update"
+		os_info sudo "apt --with-new-pkgs --autoremove upgrade"
+	else
+		os_info sudo "apt install --only-upgrade $*"
+	fi
+	;;
+purge)
+	shift
+	os_info sudo "apt remove --purge $*"
+	os_info sudo "apt autoremove --purge"
+	;;
+remove)
+	shift
+	os_info sudo "apt remove $*"
+	os_info sudo "apt autoremove"
+	;;
+search)
+	shift
+	os_info run "apt-cache search $*"
+	;;
+*)
+	os_info "Invalid command '$1'."
+	exit 2
+	;;
+esac

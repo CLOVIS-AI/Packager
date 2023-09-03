@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+. ${os_toolkit_import:?}
+
+case $1 in
+enabled)
+	hash raco 2>/dev/null || (
+		echo "'raco' is not installed."
+		exit 1
+	)
+	;;
+name)
+	echo -en "Racket dependencies"
+	;;
+install)
+	shift
+	os_info run "raco pkg install $*"
+	;;
+upgrade)
+	shift
+	if [[ $# == 0 ]]; then
+		os_info run "raco pkg update --all"
+	else
+		os_info run "raco pkg update $*"
+	fi
+	;;
+purge)
+	shift
+	os_info run "raco pkg remove --auto $*"
+	;;
+remove)
+	shift
+	os_info run "raco pkg remove $*"
+	;;
+search)
+	shift
+	os_info "This operation is not supported."
+	echo "The official catalogs are:"
+	echo " - https://pkgs.racket-lang.org"
+	echo " - http://planet-compats.racket-lang.org"
+	;;
+*)
+	os_info "Invalid command '$1'."
+	exit 2
+	;;
+esac

@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+. ${os_toolkit_import:?}
+
+case $1 in
+enabled)
+	hash pacman 2>/dev/null || (
+		echo "'pacman' is not installed."
+		exit 1
+	)
+	;;
+name)
+	echo -n "ArchLinux packages (AUR excluded)"
+	;;
+install)
+	shift
+	os_info sudo "pacman -S --needed $*"
+	;;
+upgrade)
+	shift
+	os_info sudo "pacman -Syuu $*"
+	os_info sudo "pacman -Fy"
+	;;
+clean)
+	os_info "Searching for unneeded/orphan packages…"
+	if pacman -Qdt; then
+		os_menu --title "Do you want to remove them?" --default no "yes Remove them" "no Keep them"
+		if [[ ${os_menu_answer:?} == "yes" ]]; then
+			packager --tool packager-pacman remove "$(pacman -Qdt | cut -d' ' -f1)"
+		fi
+	fi
+
+	os_menu --title "Cleaning the package cache" --default u \
+		"u Remove uninstalled packages from the cache" \
+		"i Completely clean the cache (it will be impossible to rollback packages)" \
+		"n Do not clean the cache"
+	case ${os_menu_answer:?} in
+	u)
+		os_info sudo "pacman -Sc"
+		;;
+	i)
+		os_info sudo "pacman -Scc"
+		;;
+	esac
+	;;
+remove)
+	shift
+	os_info sudo "pacman -R --confirm $*"
+	;;
+purge)
+	shift
+	os_info sudo "pacman -Rsu --confirm $*"
+	;;
+search)
+	shift
+	os_menu --title "Where do you want to search?" --default all \
+		"all Search for a package with this name" \
+		"installed Give me information on this package I installed" \
+		"file Where can I find this file?" \
+		"files Show the contents of this package"
+	case ${os_menu_answer:?} in
+	all)
+		os_info run "pacman -Ss $*"
+		;;
+	installed)
+		os_info run "pacman -Qi $*"
+		;;
+	file)
+		os_info run "pacman -F $*"
+		;;
+	files)
+		os_info run "pacman -Ql $*"
+		;;
+	esac
+	;;
+*)
+	os_info "Invalid command '$1'."
+	exit 2
+	;;
+esac

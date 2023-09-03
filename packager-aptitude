@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+. ${os_toolkit_import:?}
+
+case $1 in
+enabled)
+	hash aptitude 2>/dev/null || (
+		echo "'aptitude' is not installed."
+		exit 1
+	)
+	;;
+name)
+	echo -n "Modern Debian package manager"
+	;;
+install)
+	shift
+	os_info sudo "aptitude install $*"
+	;;
+upgrade)
+	shift
+	if [[ $# == 0 ]]; then
+		os_info sudo "aptitude update"
+		os_info sudo "aptitude safe-upgrade"
+	else
+		os_info "Cannot upgrade only selected packages."
+		exit 1
+	fi
+	;;
+purge)
+	shift
+	os_info sudo "aptitude purge $*"
+	;;
+remove)
+	shift
+	os_info sudo "aptitude remove $*"
+	;;
+search)
+	shift
+	os_info run "aptitude search $*"
+	;;
+*)
+	os_info "Invalid command '$1'."
+	exit 2
+	;;
+esac

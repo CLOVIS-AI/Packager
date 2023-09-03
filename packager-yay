@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+. ${os_toolkit_import:?}
+
+case $1 in
+enabled)
+	hash yay 2>/dev/null || (
+		echo "'yay' is not installed."
+		exit 1
+	)
+	;;
+name)
+	echo -n "ArchLinux packages (AUR included)"
+	;;
+install)
+	shift
+	os_info run "yay -S --needed $*"
+	;;
+upgrade)
+	shift
+	os_info run "yay -Syuu $*"
+	os_info run "yay -Fy"
+	;;
+clean)
+	packager --tool packager-pacman clean
+	os_info run "yay -Sc"
+	;;
+remove)
+	shift
+	os_info run "yay -R --confirm $*"
+	;;
+purge)
+	shift
+	os_info run "yay -Rsu --confirm $*"
+	;;
+search)
+	shift
+	os_menu --title "Where do you want to search?" --default all \
+		"all Search for a package with this name" \
+		"installed Give me information on this package I installed" \
+		"file Where can I find this file?" \
+		"files Show the contents of this package"
+	case ${os_menu_answer:?} in
+	all)
+		os_info run "yay -Ss $*"
+		;;
+	installed)
+		os_info run "yay -Qi $*"
+		;;
+	file)
+		os_info run "yay -F $*"
+		;;
+	files)
+		os_info run "yay -Ql $*"
+		;;
+	esac
+	;;
+*)
+	os_info "Invalid command '$1'."
+	exit 2
+	;;
+esac
