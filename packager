@@ -115,7 +115,7 @@ function find-tools() {
 }
 
 function select-tool() {
-	os_menu --title "Choose your tool:" "${TOOLS[@]}"
+	os_menu --title "Welcome to Packager, a frontend to various package managers. Which software do you want to use to $*?" "${TOOLS[@]}"
 	TOOL="packager-${os_menu_answer:?}"
 	debug "Selected tool: '$TOOL'."
 }
@@ -129,7 +129,7 @@ if [[ $1 == "--tool" ]]; then
 	shift
 	shift
 else
-	select-tool
+	select-tool "$@"
 fi
 
 function find-command() {
