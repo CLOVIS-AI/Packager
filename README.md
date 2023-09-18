@@ -81,13 +81,14 @@ export PATH="$PATH:replace_this_by_where_you_cloned_the_project"
 
 If you wish to add support for another installation method, please check for issues labelled with ~deployment (or create a new one).
 
-## Contributing
-
-This project is managed on [our GitLab instance](https://gitlab.com/opensavvy/packager).
-
-The various ways to contribute to this project are documented [in our wiki](https://gitlab.com/opensavvy/wiki).
-
 ## Licensing
 
 This project is licensed under the GNU Affero General Public License, version 3.
 The full text is available in the [LICENSE.txt](LICENSE.txt) file.
+
+## Contributing
+
+This project follows the OpenSavvy workflow and code conventions.
+To learn how to contribute, please read [our wiki](https://gitlab.com/opensavvy/wiki/-/blob/main/README.md).
+
+This project also uses the [OpenSavvy Playground](docs/playground/README.md).
