@@ -1,0 +1,42 @@
+stages:
+  - docker  # create images that are needed by the rest of the build
+  - build   # create any outputs of the project (binaries, containers, charts…)
+  - test    # all quality checks
+  - deploy  # export the outputs (publish to an artifact registry, deploy on a server…)
+
+include:
+  - remote: https://gitlab.com/opensavvy/ci-templates/-/raw/main/version.gitlab-ci.yml
+  - remote: https://gitlab.com/opensavvy/ci-templates/-/raw/main/mirror.gitlab-ci.yml
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_TAG
+
+hello-world:
+  image: alpine:latest
+  script:
+    - echo 'Hello world'
+  interruptible: true
+
+mirror-playground:
+  stage: deploy
+  extends: [ .os.mirror ]
+  needs: [ ]
+
+  variables:
+    url: "$playground_parent"
+    name: "$playground_parent_name"
+    key: "$playground_mirroring_key"
+    key_public: "$playground_mirroring_key_public"
+
+  rules:
+    - if: $playground_parent == null || $playground_parent_name == null
+      when: never
+    - if: $playground_mirroring_key == null || $playground_mirroring_key_public == null
+      when: never
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
+    - when: manual
+      allow_failure: true
