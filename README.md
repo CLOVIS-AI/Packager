@@ -4,7 +4,9 @@ Simple CLI to upgrade your system or install packages in a single command, no ma
 
 Packager __always__ asks for confirmation and prints every command it executes, so you always know what is happening.
 
-Supported backends:
+![](docs/packager-install.png "Packager install screenshot")
+
+Supported:
 - `apt` and `aptitude`: Debian-based distributions
 - `pacman`: ArchLinux official repositories
 - `yay`: ArchLinux user repository (AUR)
