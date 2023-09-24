@@ -12,7 +12,7 @@ Supported backends:
 - `raco`: Racket libraries
 - `sdkman`: Java/JVM libraries
 
-Packager is made to be easy to extend: adding a backend is as simple as writing a simple shell script ([example](packager-raco)).
+Packager is made to be easy to extend: adding a backend is as simple as writing a small shell script ([tutorial](docs/add-package-manager.md)).
 We welcome contributions that add support for other package managers!
 
 [TOC]
