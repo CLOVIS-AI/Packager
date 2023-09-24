@@ -20,7 +20,7 @@ We welcome contributions that add support for other package managers!
 ## User guide
 
 Packager translates package manager commands to an underlying implementation.
-Each implementation is a separate script, and a [main script](packager) provides command parsing.
+Each implementation is a separate script, and a [main script](src/packager) provides command parsing.
 
 All the following commands allow specifying multiple packages by separating them with spaces.
 
@@ -74,7 +74,7 @@ git clone https://gitlab.com/opensavvy/packager.git
 ```
 Finally, add it the project to your `$PATH`. For example, when using Bash, add the following line to your `~/.bashrc`:
 ```shell
-export PATH="$PATH:replace_this_by_where_you_cloned_the_project"
+export PATH="$PATH:replace_this_by_where_you_cloned_the_project/src"
 ```
 
 </details>

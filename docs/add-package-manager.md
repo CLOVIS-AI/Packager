@@ -79,7 +79,7 @@ name)
 esac
 ```
 
-If you are writing a package manager which is able to install itself, you may want to always report that it is available, and automatically install it when another command is called. Example: [package-sdkman](../packager-sdkman).
+If you are writing a package manager which is able to install itself, you may want to always report that it is available, and automatically install it when another command is called. Example: [package-sdkman](../src/packager-sdkman).
 
 ### Installing packages
 
@@ -154,7 +154,7 @@ esac
 Because package managers rarely implement all of these, it's not really possible to create a command for each.
 Instead, each package manager should ask the user with a list of supported features, and let the user decide on a case-by-case basis.
 
-Raco supports none of these searches, so we will take another example: [packager-pacman](../packager-pacman).
+Raco supports none of these searches, so we will take another example: [packager-pacman](../src/packager-pacman).
 Making a menu happens in two commands: `os_menu` to ask and `os_menu_answer` to get the answer.
 
 ```shell
@@ -192,7 +192,7 @@ search)
 esac
 ```
 
-We now have implemented all the commands. We can see the results in the [packager-raco](../packager-raco) script.
+We now have implemented all the commands. We can see the results in the [packager-raco](../src/packager-raco) script.
 
 ## Contributing your script to the repository
 
