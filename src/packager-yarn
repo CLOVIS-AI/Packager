@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+. ${os_toolkit_import:?}
+
+function ask-mode() {
+	os_menu --title "How do you want to run Yarn?" --default project \
+		"root System-wide packages" \
+		"user Personal packages" \
+		"project This project only"
+	case ${os_menu_answer:?} in
+	r | root)
+		MODE="sudo"
+		YARN="yarn global"
+		;;
+	u | user)
+		MODE="run"
+		YARN="yarn global"
+		;;
+	*)
+		[[ -f package.json ]] || os_warning "No package.json found in the current directory"
+		MODE="run"
+		YARN="yarn"
+		;;
+	esac
+}
+
+case $1 in
+enabled)
+	hash yarn 2>/dev/null || (
+		echo "'yarn' is not installed."
+		exit 1
+	)
+	;;
+name)
+	echo -en "Install packages from NPM"
+	;;
+install)
+	shift
+	ask-mode
+	os_info "$MODE" "$YARN add $*"
+	;;
+upgrade)
+	shift
+	ask-mode
+	if [[ $# == 0 ]]; then
+		os_info "$MODE" "$YARN upgrade-interactive"
+	else
+		os_info "$MODE" "$YARN add $*"
+	fi
+	;;
+purge | remove)
+	shift
+	ask-mode
+	os_info "$MODE" "$YARN remove $*"
+	;;
+search)
+	shift
+	os_menu --title "Where do you want to search?" --default all \
+		"all Detailed information for a package, even if it isn't installed" \
+		"readme Display the README of a package, even if it isn't installed" \
+		"installed Give me information on this package I installed, or list all installed packages"
+	case ${os_menu_answer:?} in
+	all)
+		os_info run "yarn info $*"
+		;;
+	readme)
+		os_info run "yarn info $* readme"
+		;;
+	installed)
+		os_info run "yarn list $*"
+		;;
+	esac
+	;;
+*)
+	os_info "Invalid command '$1'."
+	exit 2
+	;;
+esac
