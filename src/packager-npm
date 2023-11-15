@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+. ${os_toolkit_import:?}
+
+case $1 in
+enabled)
+	hash npm 2>/dev/null || {
+		echo "npm is not installed."
+		exit 1
+	}
+	;;
+name)
+	echo "Node packages (global)"
+	;;
+install)
+	shift
+	os_info sudo "npm install -g $*"
+	;;
+upgrade)
+	shift
+	if [[ $# == 0 ]]; then
+		os_info sudo "npm update -g"
+	else
+		os_info sudo "npm update $*"
+	fi
+	;;
+purge)
+	shift
+	os_info sudo "npm uninstall $* -g --save"
+	;;
+remove)
+	shift
+	os_info sudo "npm uninstall $* -g"
+	;;
+search)
+	shift
+	os_menu --title "Search type" --default all \
+		"all Search for a package" \
+		"installed Get info on an installed package"
+	case ${os_menu_answer} in
+	all)
+		os_info run "npm search $*"
+		;;
+	installed)
+		os_info run "npm list -g --depth=0"
+		;;
+	esac
+	;;
+*)
+	os_info "Invalid command '$1'."
+	exit 2
+	;;
+esac
