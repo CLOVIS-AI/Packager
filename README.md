@@ -14,6 +14,7 @@ Supported:
 - `raco`: Racket libraries
 - `sdkman`: Java/JVM libraries
 - `yarn`: JavaScript libraries
+- `npm`: Node.js libraries
 
 Packager is made to be easy to extend: adding a backend is as simple as writing a small shell script ([tutorial](docs/add-package-manager.md)).
 We welcome contributions that add support for other package managers!
