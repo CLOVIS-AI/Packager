@@ -1,7 +1,7 @@
-site_name: OpenSavvy Playground
+site_name: OpenSavvy Packager
 site_author: OpenSavvy & contributors
 site_description: >
-  Project template with CI/CD and IDE configuration.
+  Cross-system package manager for ArchLinux, Debian, Python…
 
 theme:
   name: material
