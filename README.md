@@ -19,6 +19,8 @@ Supported:
 Packager is made to be easy to extend: adding a backend is as simple as writing a small shell script.
 We welcome contributions that add support for other package managers!
 
+**To learn more, please visit [the documentation website](https://opensavvy.gitlab.io/system/packager/docs)!**
+
 ## Licensing
 
 This project is licensed under the GNU Affero General Public License, version 3.
