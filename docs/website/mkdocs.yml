@@ -81,6 +81,11 @@ nav:
   - Getting started:
       - install/install-from-sources.md
 
-  - Module1: []
+  - User guide:
+      - commands/help.md
+      - commands/install.md
+      - commands/upgrade.md
+      - commands/search.md
+      - commands/remove.md
 
   - Module2: []
