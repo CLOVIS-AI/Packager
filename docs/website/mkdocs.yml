@@ -87,5 +87,11 @@ nav:
       - commands/upgrade.md
       - commands/search.md
       - commands/remove.md
+      - Backends:
+          - backends/archlinux.md
+          - backends/debian.md
+          - backends/java.md
+          - backends/js.md
+          - backends/racket.md
 
   - Module2: []
