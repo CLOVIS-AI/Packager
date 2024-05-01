@@ -94,4 +94,5 @@ nav:
           - backends/js.md
           - backends/racket.md
 
-  - Module2: []
+  - Contributing:
+      - contribute/add-backend.md
