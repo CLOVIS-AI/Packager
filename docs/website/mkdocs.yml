@@ -78,7 +78,8 @@ edit_uri: edit/main/docs/website/docs
 nav:
   - Home: index.md
 
-  - Getting started: []
+  - Getting started:
+      - install/install-from-sources.md
 
   - Module1: []
 

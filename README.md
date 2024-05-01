@@ -61,30 +61,6 @@ By default, Packager prompts the user to select one the available backends. Inst
 packager --tool packager-pacman install foo
 ```
 
-## Installation guide
-
-Click on your preferred installation method to expand it:
-
-<details>
-<summary>Manual installation</summary>
-
-Before installing Packager, ensure you have installed its dependencies:
-- Bash
-- the [OpenSavvy Toolkit](https://gitlab.com/opensavvy/dotfiles)
-
-Once this is done, you can clone this repository:
-```shell
-git clone https://gitlab.com/opensavvy/packager.git
-```
-Finally, add it the project to your `$PATH`. For example, when using Bash, add the following line to your `~/.bashrc`:
-```shell
-export PATH="$PATH:replace_this_by_where_you_cloned_the_project/src"
-```
-
-</details>
-
-If you wish to add support for another installation method, please check for issues labelled with ~deployment (or create a new one).
-
 ## Licensing
 
 This project is licensed under the GNU Affero General Public License, version 3.
