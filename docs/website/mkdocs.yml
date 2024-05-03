@@ -1,7 +1,7 @@
-site_name: OpenSavvy Playground
+site_name: OpenSavvy Packager
 site_author: OpenSavvy & contributors
 site_description: >
-  Project template with CI/CD and IDE configuration.
+  Cross-system package manager for ArchLinux, Debian, Python…
 
 theme:
   name: material
@@ -78,8 +78,21 @@ edit_uri: edit/main/docs/website/docs
 nav:
   - Home: index.md
 
-  - Getting started: []
+  - Getting started:
+      - install/install-from-sources.md
 
-  - Module1: []
+  - User guide:
+      - commands/help.md
+      - commands/install.md
+      - commands/upgrade.md
+      - commands/search.md
+      - commands/remove.md
+      - Backends:
+          - backends/archlinux.md
+          - backends/debian.md
+          - backends/java.md
+          - backends/js.md
+          - backends/racket.md
 
-  - Module2: []
+  - Contributing:
+      - contribute/add-backend.md
