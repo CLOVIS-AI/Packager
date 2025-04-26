@@ -8,9 +8,11 @@ mkdocs:
     - ls
     - 'echo "repo_url: $CI_PROJECT_URL">>mkdocs.yml'
     - 'echo "repo_name: $CI_PROJECT_TITLE">>mkdocs.yml'
+    - 'echo "site_url: $CI_PAGES_URL">>mkdocs.yml'
 
   script:
     - pwd
+    - ./generate-news.sh
     - mkdocs build --site-dir ../../docs-website
 
   after_script:
